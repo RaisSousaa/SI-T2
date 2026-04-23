@@ -38,36 +38,37 @@ Y_pred = a * X_test + b
 
 # 10. Calcular métricas
 
-# MAE
+# Erro Médio Absoluto (MAE)
 mae = np.mean(np.abs(Y_test - Y_pred))
 
-# R²
-ss_total = np.sum((Y_test - np.mean(Y_test)) ** 2)
-ss_residual = np.sum((Y_test - Y_pred) ** 2)
-r2 = 1 - (ss_residual / ss_total)
+# Coeficiente de Determinação (R²)
+# Representa quanto da variação de 'charges' é explicada pelo 'bmi'
+media_y_teste = np.mean(Y_test)
+soma_total_quadrados = np.sum((Y_test - media_y_teste) ** 2)
+soma_residuos = np.sum((Y_test - Y_pred) ** 2)
+r2 = 1 - (soma_residuos / soma_total_quadrados)
 
 # 11. Mostrar resultados
-print("Quantidade total de dados:", len(df))
-print("Quantidade de treino:", len(X_train))
-print("Quantidade de teste:", len(X_test))
-print()
+print(f"--- Relatório do Modelo ---")
+print(f"Registros (Treino/Teste): {len(X_train)} / {len(X_test)}")
+print(f"Modelo: Y = {a:.4f} * X + {b:.4f}")
+print(f"MAE: {mae:.2f}")
+print(f"R²: {r2:.4f} ({r2*100:.2f}% de variância explicada)")
 
-print("Coeficiente angular (a):", a)
-print("Coeficiente linear (b):", b)
-print()
+# 12. Plotar gráfico
+plt.figure(figsize=(10,6))
 
-print("MAE:", mae)
-print("R²:", r2)
+# Dados reais do teste
+plt.scatter(X_test, Y_test, alpha=0.5, color='royalblue', label="Dados reais (Teste)")
 
-# 12. Plotar gráfico (ordenado para ficar bonito)
-plt.scatter(X_test, Y_test, label="Dados reais")
+# Reta da regressão - Usando apenas os extremos para uma linha limpa
+x_reta = np.array([X_test.min(), X_test.max()])
+y_reta = a * x_reta + b
+plt.plot(x_reta, y_reta, color='red', linewidth=3, label="Modelo de Regressão")
 
-indices = np.argsort(X_test)
-plt.plot(X_test[indices], Y_pred[indices], label="Reta da regressão")
-
-plt.xlabel("BMI")
-plt.ylabel("Charges")
-plt.title("Regressão Linear Simples: BMI x Charges")
+plt.xlabel("BMI (IMC)")
+plt.ylabel("Charges (Custos)")
+plt.title("Impacto do IMC nos Custos Médios de Saúde")
+plt.grid(True, alpha=0.3)
 plt.legend()
-
 plt.show()
